@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Encryptor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f0f0;
+        }
+        .container {
+            margin-top: 50px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+        }
+        input, button {
+            margin: 10px;
+            padding: 10px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Image Encryptor</h2>
+        <input type="file" id="imageInput" accept="image/jpeg">
+        <br>
+        <input type="number" id="keyInput" placeholder="Enter numeric key">
+        <br>
+        <button onclick="processImage()">Encrypt & Decrypt</button>
+    </div>
+    <script>
+        function processImage() {
+            const fileInput = document.getElementById('imageInput');
+            const keyInput = document.getElementById('keyInput');
+            
+            if (!fileInput.files.length) {
+                alert("Please select an image file.");
+                return;
+            }
+            
+            const key = parseInt(keyInput.value);
+            if (isNaN(key)) {
+                alert("Please enter a valid numeric key.");
+                return;
+            }
+            
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+            
+            reader.onload = function(event) {
+                const buffer = new Uint8Array(event.target.result);
+                
+                for (let i = 0; i < buffer.length; i++) {
+                    buffer[i] ^= key;
+                }
+                
+                const blob = new Blob([buffer], { type: 'image/jpeg' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = 'encrypted_decrypted.jpg';
+                link.click();
+            };
+            
+            reader.readAsArrayBuffer(file);
+        }
+    </script>
+</body>
+</html>
